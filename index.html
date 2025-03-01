@@ -7,12 +7,10 @@
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
 <style>
-  /* Global styles */
   * {
     font-family: 'Lato' !important;
   }
 
-  /* Print styles */
   @media print {
     @page {
       size: A3;
@@ -20,19 +18,16 @@
     }
   }
 
-  /* Custom font */
   @font-face {
     font-family: 'Lato';
     src: url('Lato-Regular.ttf');
   }
 
-  /* Canvas styles */
   canvas {
     margin: 3px;
     border: 1px solid;
   }
 
-  /* A4 page style */
   .a4 {
     width: 32cm;
     background: white;
@@ -50,155 +45,162 @@
 
   <ul class="nav nav-tabs" id="myTab" role="tablist"></ul>
 
-  <!-- Field selector -->
-  <div id="fieldSelector" class="mt-3">
-    <h5>Select Fields for Barcode</h5>
-    <form id="fieldForm"></form>
-  </div>
+  <!-- Field selector container -->
+  <div id="fieldSelector" class="mt-3"></div>
 </div>
 
 <div class="tab-content text-center pt-3" style="background: gray;" id="myTabContent"></div>
 
 <script>
-// GitHub commits fetch (example, can be used for other purposes)
-const repoOwner = "BoneDeath";
-const repoName = "BarcodeSN-nre";
-const branchName = 'testing';
+  // GitHub commits fetch (example, can be used for other purposes)
+  const repoOwner = "BoneDeath";
+  const repoName = "BarcodeSN-nre";
+  const branchName = 'testing';
 
-fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/commits?sha=${branchName}`)
-  .then(response => {
-    if (!response.ok) throw new Error('Network response was not ok');
-    return response.json(); // Parse JSON
-  })
-  .then(commits => {
-    commits.reverse().forEach(commit => {
-      console.log(`Commit message: ${commit.commit.message}`);
-      console.log(`Author: ${commit.commit.author.name}`);
-      console.log(`Date: ${commit.commit.author.date}`);
-      console.log('---');
+  fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/commits?sha=${branchName}`)
+    .then(response => {
+      if (!response.ok) throw new Error('Network response was not ok');
+      return response.json(); // Parse JSON
+    })
+    .then(commits => {
+      commits.reverse().forEach(commit => {
+        console.log(`Commit message: ${commit.commit.message}`);
+        console.log(`Author: ${commit.commit.author.name}`);
+        console.log(`Date: ${commit.commit.author.date}`);
+        console.log('---');
+      });
+    })
+    .catch(error => {
+      console.error('There was a problem with the fetch operation:', error);
     });
-  })
-  .catch(error => {
-    console.error('There was a problem with the fetch operation:', error);
-  });
 </script>
 
 <script>
-// Excel parsing and tab generation
-class ExcelParser {
-  constructor() {
-    this.selectedFields = new Set();
-  }
+  // Excel parsing and tab generation
+  class ExcelParser {
+    constructor() {
+      this.selectedFields = new Map();  // Store selected fields for each sheet
+    }
 
-  parse(file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const data = e.target.result;
-      const workbook = XLSX.read(data, { type: 'binary' });
+    parse(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const data = e.target.result;
+        const workbook = XLSX.read(data, { type: 'binary' });
 
-      workbook.SheetNames.forEach(sheetName => {
-        // Create tabs for each sheet
-        $("#myTab").append(`
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="${sheetName}-tab" data-bs-toggle="tab" data-bs-target="#${sheetName}" type="button" role="tab" aria-controls="${sheetName}" aria-selected="true">${sheetName}</button>
-          </li>
-        `);
+        workbook.SheetNames.forEach(sheetName => {
+          // Create tabs for each sheet
+          $("#myTab").append(`
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="${sheetName}-tab" data-bs-toggle="tab" data-bs-target="#${sheetName}" type="button" role="tab" aria-controls="${sheetName}" aria-selected="true">${sheetName}</button>
+            </li>
+          `);
 
-        const sheetData = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
-        this.addTabContent(sheetData, sheetName);
-        this.createFieldSelector(sheetData, sheetName);
-      });
-    };
-    reader.onerror = (ex) => console.log(ex);
-    reader.readAsBinaryString(file);
-  }
+          const sheetData = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+          this.addTabContent(sheetData, sheetName);
+          this.createFieldSelector(sheetData, sheetName);  // Create the field selector after parsing the sheet
+        });
+      };
+      reader.onerror = (ex) => console.log(ex);
+      reader.readAsBinaryString(file);
+    }
 
-  addTabContent(data, sheetName) {
-    // Add content for each sheet tab
-    $("#myTabContent").append(`
-      <div class="tab-pane fade a4 mx-auto" id="${sheetName}" role="tabpanel" aria-labelledby="${sheetName}-tab">
-        <div class="row">
-          <div class="col p-0" id="lato-${sheetName}"></div>
-        </div>
-      </div>
-    `);
-    this.generateBarcodes(data, sheetName);
-  }
-
-  createFieldSelector(data, sheetName) {
-    const fields = Object.keys(data[0]); // Get column names (fields)
-    const form = $('#fieldForm');
-
-    // Clear previous field selection and rebuild it
-    form.empty();
-
-    fields.forEach(field => {
-      form.append(`
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="${field}" id="${sheetName}-${field}" checked>
-          <label class="form-check-label" for="${sheetName}-${field}">
-            ${field}
-          </label>
+    addTabContent(data, sheetName) {
+      // Add content for each sheet tab
+      $("#myTabContent").append(`
+        <div class="tab-pane fade a4 mx-auto" id="${sheetName}" role="tabpanel" aria-labelledby="${sheetName}-tab">
+          <div class="row">
+            <div class="col p-0" id="lato-${sheetName}"></div>
+          </div>
         </div>
       `);
-    });
-
-    // Update selected fields when checkboxes are toggled
-    form.on('change', () => {
-      this.selectedFields.clear();
-      form.find('input:checked').each((_, checkbox) => {
-        this.selectedFields.add(checkbox.value);
-      });
       this.generateBarcodes(data, sheetName);
-    });
-  }
+    }
 
-  generateBarcodes(data, sheetName) {
-    // Clear the previous content
-    $(`#lato-${sheetName}`).empty();
+    createFieldSelector(data, sheetName) {
+      const fields = Object.keys(data[0]); // Get column names (fields)
+      const form = $(`<form id="fieldForm-${sheetName}"></form>`);  // Create a unique form for each sheet
 
-    // Generate barcodes based on selected fields
-    data.forEach(item => {
-      this.createBarcode(item['BARCODE'], sheetName);
+      // Clear previous field selection and rebuild it
+      form.empty();
 
-      // Only include selected fields for text canvases
-      this.selectedFields.forEach(field => {
-        if (item[field]) {
-          this.createTextCanvas(item[field], field, sheetName);
-        }
+      fields.forEach(field => {
+        form.append(`
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="${field}" id="${sheetName}-${field}" checked>
+            <label class="form-check-label" for="${sheetName}-${field}">
+              ${field}
+            </label>
+          </div>
+        `);
       });
-    });
+
+      // Add the form to the page under the fieldSelector container
+      $('#fieldSelector').append(`
+        <div class="mt-4">
+          <h5>Select Fields for Barcode - ${sheetName}</h5>
+        </div>
+      `);
+      $('#fieldSelector').append(form);
+
+      // Update selected fields when checkboxes are toggled
+      form.on('change', () => {
+        this.selectedFields.set(sheetName, form.find('input:checked').map(function() {
+          return $(this).val();
+        }).get());
+        this.generateBarcodes(data, sheetName);  // Re-render barcodes based on selected fields
+      });
+    }
+
+    generateBarcodes(data, sheetName) {
+      // Clear the previous content
+      $(`#lato-${sheetName}`).empty();
+
+      // Retrieve the selected fields for this sheet
+      const selectedFields = this.selectedFields.get(sheetName) || [];
+
+      // Generate barcodes based on selected fields
+      data.forEach(item => {
+        this.createBarcode(item['BARCODE'], sheetName);
+
+        // Only include selected fields for text canvases
+        selectedFields.forEach(field => {
+          if (item[field]) {
+            this.createTextCanvas(item[field], field, sheetName);
+          }
+        });
+      });
+    }
+
+    createBarcode(barcode, sheetName) {
+      const canvas = document.createElement("canvas");
+      canvas.height = 75;
+      canvas.width = 302;
+      JsBarcode(canvas, barcode, { format: "CODE128", displayValue: false, margin: 1 });
+      $(`#lato-${sheetName}`).append(canvas);
+    }
+
+    createTextCanvas(text, label, sheetName) {
+      const canvas = document.createElement("canvas");
+      canvas.height = 142;
+      canvas.width = 295;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+      ctx.textBaseline = 'middle';
+      ctx.font = "bold 28pt Lato";
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+      ctx.fillText(label, canvas.width / 2, canvas.height * 0.9);
+      $(`#lato-${sheetName}`).append(canvas);
+    }
   }
 
-  createBarcode(barcode, sheetName) {
-    const canvas = document.createElement("canvas");
-    canvas.height = 75;
-    canvas.width = 302;
-    JsBarcode(canvas, barcode, { format: "CODE128", displayValue: false, margin: 1 });
-    $(`#lato-${sheetName}`).append(canvas);
-  }
-
-  createTextCanvas(text, label, sheetName) {
-    const canvas = document.createElement("canvas");
-    canvas.height = 142;
-    canvas.width = 295;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "black";
-    ctx.textAlign = "center";
-    ctx.textBaseline = 'middle';
-    ctx.font = "bold 28pt Lato";
-    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
-    ctx.fillText(label, canvas.width / 2, canvas.height * 0.9);
-    $(`#lato-${sheetName}`).append(canvas);
-  }
-}
-
-// File input event listener
-document.getElementById('upload').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  const parser = new ExcelParser();
-  parser.parse(file);
-});
+  // File input event listener
+  document.getElementById('upload').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    const parser = new ExcelParser();
+    parser.parse(file);
+  });
 </script>

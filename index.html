@@ -142,7 +142,7 @@
       var bCanvas = document.createElement('canvas');
       var image = new Image();
       image.src = bCanvas.toDataURL("image/jpeg", 1.0);
- 
+
 
 
       var canvas = document.createElement("canvas");
@@ -158,15 +158,11 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "black";
       ctx.font = "14.4pt Lato";
-      ctx.fillText('SN : ' + data["BARCODE"], 9.6755905512 * 2, 30.307086614 * 2);
+      ctx.fillText('SN : ' + barcode, 9.6755905512 * 2, 30.307086614 * 2);
       ctx.fillStyle = "black";
 
-     
-      JsBarcode(bCanvas, data['BARCODE'], {
-        format: "CODE128",
-        displayValue: false,
-        margin: 1,
-      });
+
+      JsBarcode(bCanvas, barcode, { format: "CODE128", displayValue: false, margin: 1 });
 
 
       image.onload = function () {

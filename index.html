@@ -143,7 +143,6 @@
       //generate barcode image
       var bCanvas = document.createElement('canvas');
       var image = new Image();
-      image.src = bCanvas.toDataURL("image/jpeg", 1.0);
 
 
 
@@ -170,6 +169,7 @@
       image.onload = function () {
         ctx.drawImage(image, 7 * 2, 7 * 2, 137.18110236 * 2, 12 * 2);
       };
+      image.src = bCanvas.toDataURL("image/jpeg", 2.0);
 
       $("#lato-" + sheetName).append(canvas);
     }

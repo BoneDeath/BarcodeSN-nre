@@ -137,8 +137,11 @@ class ExcelParser {
 
   createTextCanvas(text, label, sheetName) {
     const canvas = document.createElement("canvas");
-    canvas.height = 142;
-    canvas.width = 295;
+    canvas.height = 143;
+    canvas.width = 379;
+    canvas.style.width = "3.2cm";
+    canvas.width = 379;
+    canvas.style.height = "1.2cm";
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -146,8 +149,9 @@ class ExcelParser {
     ctx.textAlign = "center";
     ctx.textBaseline = 'middle';
     ctx.font = "bold 18pt Lato";
-    ctx.fillText(text, canvas.width / 2, canvas.height / 0.9);
-    ctx.fillText(label, canvas.width / 2, canvas.height * 2);
+    ctx.fillText(text, canvas.width / 2, canvas.height * 0.3);
+    ctx.fillText(label, canvas.width / 2, canvas.height * 0.9);
+    ctx.fillRect(ts.width * 0.1, ts.height / 2, ts.width * 0.8, 3);
     $("#lato-" + sheetName).append(canvas);
   }
 }

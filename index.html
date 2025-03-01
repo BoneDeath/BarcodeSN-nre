@@ -63,7 +63,7 @@ fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/commits`)
     return response.json(); // Parse JSON
   })
   .then(commits => {
-    commits.forEach(commit => {
+    commits.reverse().forEach(commit => {
       console.log(`Commit message: ${commit.commit.message}`);
       console.log(`Author: ${commit.commit.author.name}`);
       console.log(`Date: ${commit.commit.author.date}`);
@@ -80,19 +80,7 @@ fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/commits`)
 
 
 
-
-
-
 <script>
-
-
-
-
-
-
-
-
-
 
   var ExcelToJSON = function () {
 

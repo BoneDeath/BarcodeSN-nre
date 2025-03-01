@@ -154,16 +154,19 @@ fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/commits`)
 
   function cetak(s, shee) {
     s.forEach((data) => {
-      var bCanvas = document.createElement('canvas');
-      var canvas = document.createElement("canvas");
-      canvas.height = 37.795275591 * 2;
-      canvas.width = 151.18110236 * 2;
-      canvas.style.width = "4cm";
-      canvas.style.height = "1cm";
-      var ctx = canvas.getContext('2d');
+      var barcode = document.createElement("canvas");
+      barcode.height = 37.795275591 * 2;
+      barcode.width = 151.18110236 * 2;
+      barcode.style.width = "4cm";
+      barcode.style.height = "1cm";
 
+      //clear paper
+
+      var ctx = canvas.getContext('2d');
       ctx.fillStyle = "white";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, barcode.width, barcode.height);
+
+      //font format
 
       ctx.fillStyle = "black";
       ctx.font = "14.4pt Lato";
@@ -171,6 +174,9 @@ fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/commits`)
 
       ctx.fillStyle = "black";
 
+      //barcode
+
+      var bCanvas = document.createElement('canvas');
       JsBarcode(bCanvas, data['BARCODE'], {
         format: "CODE128",
         displayValue: false,

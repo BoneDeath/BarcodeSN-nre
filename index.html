@@ -163,7 +163,7 @@ fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/commits?sha=${branc
 
       //clear paper
 
-      var ctx = canvas.getContext('2d');
+      var ctx = barcode.getContext('2d');
       ctx.fillStyle = "white";
       ctx.fillRect(0, 0, barcode.width, barcode.height);
 

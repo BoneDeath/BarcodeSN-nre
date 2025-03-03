@@ -121,13 +121,13 @@
         // Create barcode and text canvases for each row
         this.createBarcode(item['BARCODE'], sheetName);
         this.createTextCanvas(item['BARCODE'], item['JENIS MESIN'], sheetName);
-        this.createTextCanvas(item['FIELD1'], 'Field1', sheetName);
-        this.createTextCanvas(item['FIELD2'], 'Field2', sheetName);
-        this.createTextCanvas(item['FIELD3'], 'Field3', sheetName);
-        this.createTextCanvas(item['FIELD4'], 'Field4', sheetName);
-        this.createTextCanvas(item['FIELD5'], 'Field5', sheetName);
-        this.createTextCanvas(item['FIELD6'], 'Field6', sheetName);
-        this.createTextCanvas(item['FIELD7'], 'Field7', sheetName);
+        this.createTextCode(item['FIELD1'], 'Field1', sheetName);
+        this.createTextCode(item['FIELD2'], 'Field2', sheetName);
+        this.createTextCode(item['FIELD3'], 'Field3', sheetName);
+        this.createTextCode(item['FIELD4'], 'Field4', sheetName);
+        this.createTextCode(item['FIELD5'], 'Field5', sheetName);
+        this.createTextCode(item['FIELD6'], 'Field6', sheetName);
+        this.createTextCode(item['FIELD7'], 'Field7', sheetName);
 
       });
     }
@@ -179,10 +179,8 @@
       ctx.fillRect(canvas.width * 0.1, canvas.height / 2, canvas.width * 0.8, 3);
       $("#lato-" + sheetName).append(canvas);
     }
-  }
 
-
-  createTextCode(text, label, sheetName) {
+    createTextCode(text, label, sheetName) {
       const canvas = document.createElement("canvas");
       canvas.height = 143;
       canvas.width = 379;
@@ -198,7 +196,11 @@
       ctx.font = "bold 19pt Lato";
       ctx.fillText(text, canvas.width / 2, canvas.height * 2);
       $("#lato-" + sheetName).append(canvas);
+    }
+
   }
+
+
 
   // File input event listener
   document.getElementById('upload').addEventListener('change', (e) => {

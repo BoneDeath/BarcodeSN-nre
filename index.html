@@ -120,7 +120,7 @@
       data.forEach(item => {
         // Create barcode and text canvases for each row
         this.createBarcode(item['BARCODE'], sheetName);
-        this.createTextCanvas(item['BARCODE'], item['JENIS MESIN'], sheetName);
+        this.createTextCanvas(item['JENIS MESIN'], item['BARCODE'], sheetName);
         this.createTextCode(item['FIELD1'], 'Field1', sheetName);
         this.createTextCode(item['FIELD2'], 'Field2', sheetName);
         this.createTextCode(item['FIELD3'], 'Field3', sheetName);
@@ -194,7 +194,7 @@
       ctx.textAlign = "center";
       ctx.textBaseline = 'middle';
       ctx.font = "bold 19pt Lato";
-      ctx.fillText(text, canvas.width / 2, canvas.height * 2);
+      ctx.fillText(text, canvas.width / 2, canvas.height * 0.8);
       $("#lato-" + sheetName).append(canvas);
     }
 

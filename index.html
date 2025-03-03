@@ -61,7 +61,7 @@
   const repoName = "BarcodeSN-nre";
   const branchName = 'testing';
 
-  fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/commits?sha=${branchName}`)
+  fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/commits?sha=${branchName}`,{cache: "no-cache"})
     .then(response => {
       if (!response.ok) throw new Error('Network response was not ok');
       return response.json(); // Parse JSON

@@ -121,13 +121,14 @@
         // Create barcode and text canvases for each row
         this.createBarcode(item['BARCODE'], sheetName);
         this.createTextCanvas(item['BARCODE'], item['JENIS MESIN'], sheetName);
-        this.createTextCanvas(item['MAINBOARD'], 'Mainboard', sheetName);
-        this.createTextCanvas(item['MODUL'], 'Modul', sheetName);
-        this.createTextCanvas(item['POMPA'], 'Pompa', sheetName);
-        this.createTextCanvas(item['STEPPER'], 'Stepper', sheetName);
-        this.createTextCanvas(item['WIMS'], 'Wims', sheetName);
-        this.createTextCanvas(item['WIMS'], 'Wims', sheetName);
-        this.createTextCanvas(item['WIMS'], 'Wims', sheetName);
+        this.createTextCanvas(item['FIELD1'], 'Field1', sheetName);
+        this.createTextCanvas(item['FIELD2'], 'Field2', sheetName);
+        this.createTextCanvas(item['FIELD3'], 'Field3', sheetName);
+        this.createTextCanvas(item['FIELD4'], 'Field4', sheetName);
+        this.createTextCanvas(item['FIELD5'], 'Field5', sheetName);
+        this.createTextCanvas(item['FIELD6'], 'Field6', sheetName);
+        this.createTextCanvas(item['FIELD7'], 'Field7', sheetName);
+
       });
     }
 
@@ -172,12 +173,31 @@
       ctx.fillStyle = "black";
       ctx.textAlign = "center";
       ctx.textBaseline = 'middle';
-      ctx.font = "bold 18pt Lato";
+      ctx.font = "bold 19pt Lato";
       ctx.fillText(label, canvas.width / 2, canvas.height * 0.3);
       ctx.fillText(text, canvas.width / 2, canvas.height * 0.75);
       ctx.fillRect(canvas.width * 0.1, canvas.height / 2, canvas.width * 0.8, 3);
       $("#lato-" + sheetName).append(canvas);
     }
+  }
+
+
+  createTextCode(text, label, sheetName) {
+      const canvas = document.createElement("canvas");
+      canvas.height = 143;
+      canvas.width = 379;
+      canvas.style.width = "3.2cm";
+      canvas.width = 379;
+      canvas.style.height = "1.2cm";
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+      ctx.textBaseline = 'middle';
+      ctx.font = "bold 19pt Lato";
+      ctx.fillText(text, canvas.width / 2, canvas.height * 2);
+      $("#lato-" + sheetName).append(canvas);
   }
 
   // File input event listener

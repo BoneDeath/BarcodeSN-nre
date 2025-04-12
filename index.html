@@ -61,7 +61,7 @@
   const repoName = "BarcodeSN-nre";
   const branchName = 'testing';
 
-  fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/commits?sha=${branchName}`)
+  fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/commits?sha=${branchName}`,{cache: "no-cache"})
     .then(response => {
       if (!response.ok) throw new Error('Network response was not ok');
       return response.json(); // Parse JSON
@@ -120,31 +120,22 @@
       data.forEach(item => {
         // Create barcode and text canvases for each row
         this.createBarcode(item['BARCODE'], sheetName);
-        this.createTextCanvas(item['BARCODE'], item['JENIS MESIN'], sheetName);
-        this.createTextCanvas(item['MAINBOARD'], 'Mainboard', sheetName);
-        this.createTextCanvas(item['MODUL'], 'Modul', sheetName);
-        this.createTextCanvas(item['POMPA'], 'Pompa', sheetName);
-        this.createTextCanvas(item['STEPPER'], 'Stepper', sheetName);
-        this.createTextCanvas(item['WIMS'], 'Wims', sheetName);
-        this.createTextCanvas(item['WIMS'], 'Wims', sheetName);
-        this.createTextCanvas(item['WIMS'], 'Wims', sheetName);
+        this.createTextCanvas(item['JENIS MESIN'], item['BARCODE'], sheetName);
+        this.createTextCode(item['FIELD1'], 'Field1', sheetName);
+        this.createTextCode(item['FIELD2'], 'Field2', sheetName);
+        this.createTextCode(item['FIELD3'], 'Field3', sheetName);
+        this.createTextCode(item['FIELD4'], 'Field4', sheetName);
+        this.createTextCode(item['FIELD5'], 'Field5', sheetName);
+        this.createTextCode(item['FIELD6'], 'Field6', sheetName);
+        this.createTextCode(item['FIELD7'], 'Field7', sheetName);
+
       });
     }
 
     createBarcode(barcode, sheetName) {
-      // const canvas = document.createElement("canvas");
-      // canvas.height = 75;
-      // canvas.width = 302;
-      // JsBarcode(canvas, barcode, { format: "CODE128", displayValue: false, margin: 1 });
-
-
-
-
       //generate barcode image
       var bCanvas = document.createElement('canvas');
       var image = new Image();
-
-
 
       var canvas = document.createElement("canvas");
       canvas.height = 37.795275591 * 2;
@@ -152,9 +143,7 @@
       canvas.style.width = "4cm";
       canvas.style.height = "1cm";
 
-
       var ctx = canvas.getContext('2d');
-
       ctx.fillStyle = "white";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "black";
@@ -162,10 +151,7 @@
       ctx.fillText('SN : ' + barcode, 9.6755905512 * 2, 30.307086614 * 2);
       ctx.fillStyle = "black";
 
-
       JsBarcode(bCanvas, barcode, { format: "CODE128", displayValue: false, margin: 1 });
-
-
       image.onload = function () {
         ctx.drawImage(image, 7 * 2, 7 * 2, 137.18110236 * 2, 12 * 2);
       };
@@ -187,13 +173,34 @@
       ctx.fillStyle = "black";
       ctx.textAlign = "center";
       ctx.textBaseline = 'middle';
-      ctx.font = "bold 18pt Lato";
+      ctx.font = "bold 20pt Lato";
       ctx.fillText(label, canvas.width / 2, canvas.height * 0.3);
       ctx.fillText(text, canvas.width / 2, canvas.height * 0.75);
       ctx.fillRect(canvas.width * 0.1, canvas.height / 2, canvas.width * 0.8, 3);
       $("#lato-" + sheetName).append(canvas);
     }
+
+    createTextCode(text, label, sheetName) {
+      const canvas = document.createElement("canvas");
+      canvas.height = 143;
+      canvas.width = 379;
+      canvas.style.width = "3.2cm";
+      canvas.width = 379;
+      canvas.style.height = "1.2cm";
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+      ctx.textBaseline = 'middle';
+      ctx.font = "bold 22pt Lato";
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+      $("#lato-" + sheetName).append(canvas);
+    }
+
   }
+
+
 
   // File input event listener
   document.getElementById('upload').addEventListener('change', (e) => {
